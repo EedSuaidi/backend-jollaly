@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import authRoutes from "./routes/auth.route.js";
+import noteRoutes from "./routes/note.route.js";
 
 // load .env
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(cors());
 
 // routes
 app.use("/api/auth", authRoutes);
+app.use("/api/notes", noteRoutes);
 
 // start server
 app.listen(PORT, () => {
