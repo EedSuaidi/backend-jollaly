@@ -47,6 +47,7 @@ Server akan berjalan pada `http://localhost:3000`.
   - id (UUID), name, email (unik), password (hash)
 - Note
   - id (UUID), title, content, userId (relasi ke User)
+  - isFavorite (boolean, default: false), isArchived (boolean, default: false)
 
 ## Format Respons
 
@@ -136,6 +137,10 @@ Prefix: `/api/notes`
 
 1. GET `/` – Ambil semua note milik user
 
+   - Dukungan filter opsional via query params:
+     - `isFavorite=true|false`
+     - `isArchived=true|false`
+   - Contoh: `GET /api/notes?isFavorite=true&isArchived=false`
    - 200 OK (contoh):
      ```json
      {
@@ -147,6 +152,8 @@ Prefix: `/api/notes`
            "title": "Judul",
            "content": "Isi",
            "userId": "<uuid>",
+           "isFavorite": false,
+           "isArchived": false,
            "createdAt": "...",
            "updatedAt": "..."
          }
@@ -165,7 +172,9 @@ Prefix: `/api/notes`
          "id": "<uuid>",
          "title": "...",
          "content": "...",
-         "userId": "<uuid>"
+         "userId": "<uuid>",
+         "isFavorite": false,
+         "isArchived": false
        }
      }
      ```
@@ -173,13 +182,19 @@ Prefix: `/api/notes`
 
 3. POST `/` – Buat note baru
 
-   - Body JSON (disarankan wajib keduanya):
+   - Body JSON (disarankan minimal `title` atau `content`; keduanya tidak boleh sama-sama kosong):
      ```json
-     { "title": "Judul", "content": "Isi catatan" }
+     {
+       "title": "Judul",
+       "content": "Isi catatan",
+       "isFavorite": false,
+       "isArchived": false
+     }
      ```
    - Validasi:
-     - Akan menolak jika `title` dan `content` keduanya kosong/tidak ada (401 Data cannot be empty!)
-     - Skema DB mensyaratkan keduanya bertipe string (hindari tidak mengirim salah satunya)
+     - Menolak jika `title` dan `content` keduanya kosong/tidak ada (401 Data cannot be empty!)
+   - Catatan:
+     - `isFavorite` dan `isArchived` opsional; jika tidak dikirim akan default `false`.
    - 200 OK:
      ```json
      {
@@ -189,19 +204,26 @@ Prefix: `/api/notes`
          "id": "<uuid>",
          "title": "Judul",
          "content": "Isi",
-         "userId": "<uuid>"
+         "userId": "<uuid>",
+         "isFavorite": false,
+         "isArchived": false
        }
      }
      ```
 
 4. PUT `/:id` – Update note (hanya milik user)
 
-   - Body JSON (minimal salah satu):
+   - Body JSON (minimal salah satu field):
      ```json
-     { "title": "Judul baru", "content": "Isi baru" }
+     {
+       "title": "Judul baru",
+       "content": "Isi baru",
+       "isFavorite": true,
+       "isArchived": false
+     }
      ```
    - Validasi:
-     - Menolak jika `title` dan `content` keduanya kosong/tidak ada (401)
+     - Menolak jika semua field (`title`, `content`, `isFavorite`, `isArchived`) tidak ada (401)
      - 404 bila note tidak ditemukan/ bukan milik user
    - 200 OK:
      ```json
