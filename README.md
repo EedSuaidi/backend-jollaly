@@ -29,10 +29,11 @@ Prefix API: `/api`
    - `npm install`
 2. Siapkan file `.env` di root proyek dengan nilai minimal:
    ```env
-   PORT=3000
-   DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DBNAME?schema=public"
+   NODE_ENV=localhost
    JWT_SECRET="your_jwt_secret"
-   NODE_ENV=development
+   PORT=3000
+   BASE_URL=http://localhost:3000
+   DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DBNAME"
    ```
 3. Jalankan migrasi Prisma dan generate client (sesuaikan DB Anda):
    - `npx prisma migrate dev --name init`
